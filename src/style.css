@@ -1,0 +1,739 @@
+:root {
+  --bg: #0b0b0d;
+  --surface: #17171b;
+  --surface-2: #222228;
+  --border: #33333c;
+  --text: #f6f6f8;
+  --muted: #a9a9b5;
+  --accent: #ffc247;
+  --accent-ink: #1a1200;
+  --glow: 255, 194, 71;
+  --tap: 52px;
+  --radius: 16px;
+
+  color-scheme: dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  overscroll-behavior: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+svg.filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ---- Layout shared by the library and editor ---- */
+
+.view {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  min-height: 68px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 4px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--accent);
+  box-shadow:
+    0 0 12px rgba(var(--glow), 0.9),
+    0 0 28px rgba(var(--glow), 0.5);
+}
+
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 16px 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+}
+
+.icon-btn.accent {
+  color: var(--accent);
+}
+
+.icon-btn.large {
+  width: 60px;
+  height: 60px;
+  background: var(--surface-2);
+}
+
+@media (hover: hover) {
+  .icon-btn:hover:not(:disabled) {
+    background: var(--surface-2);
+  }
+
+  .btn.primary:hover:not(:disabled),
+  .play-btn:hover {
+    filter: brightness(1.08);
+  }
+}
+
+/* ---- Library ---- */
+
+.library {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 16px;
+}
+
+.script-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.script-card {
+  display: flex;
+  align-items: center;
+  padding-right: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.script-open {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  text-align: left;
+}
+
+.script-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.script-meta,
+.word-count {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.empty {
+  padding: 56px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty-title {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.empty p {
+  margin: 0;
+}
+
+/* ---- Editor ---- */
+
+.title-input {
+  flex: 1;
+  min-width: 0;
+  height: var(--tap);
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+
+.script-input {
+  flex: 1;
+  min-height: 0;
+  margin: 0 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  resize: none;
+}
+
+.title-input::placeholder,
+.script-input::placeholder {
+  color: var(--muted);
+}
+
+.title-input:focus-visible,
+.script-input:focus-visible {
+  outline: 0;
+}
+
+.script-input:focus-visible {
+  border-color: var(--accent);
+}
+
+.word-count {
+  margin-right: auto;
+}
+
+/* ---- Settings controls ---- */
+
+.stepper,
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+}
+
+.stepper-label {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  padding: 0 0 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.stepper output {
+  min-width: 2.2em;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.segmented {
+  display: flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.segmented button {
+  min-width: 52px;
+  height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.switch {
+  position: relative;
+  width: 60px;
+  height: 36px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform 0.15s;
+}
+
+.switch[aria-pressed='true'] {
+  background: var(--accent);
+}
+
+.switch[aria-pressed='true']::after {
+  transform: translateX(24px);
+  background: var(--accent-ink);
+}
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  margin: auto auto 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.sheet[open] {
+  display: grid;
+  gap: 10px;
+}
+
+.sheet::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.sheet h2 {
+  margin: 0 0 4px;
+  font-size: 1.1875rem;
+}
+
+.sheet .btn {
+  margin-top: 8px;
+}
+
+@media (min-width: 600px) {
+  .sheet {
+    margin: auto;
+    border-bottom: 1px solid var(--border);
+    border-radius: 24px;
+  }
+}
+
+/* ---- Prompter ---- */
+
+.prompter {
+  position: fixed;
+  inset: 0;
+  max-width: none;
+  padding: 0;
+  background: #000;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+
+.mirror {
+  height: 100%;
+}
+
+.mirror.mirrored {
+  transform: scaleX(-1);
+}
+
+.scroller {
+  /* Room below the last line so it can travel all the way up to the reading line. */
+  padding-bottom: 100vh;
+  will-change: transform;
+}
+
+.prompt-text {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 max(6vw, env(safe-area-inset-right)) 0 max(6vw, env(safe-area-inset-left));
+  color: #fff;
+  font-weight: 600;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* The reading line: a soft band of light with a brighter core. */
+.glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--anchor, 28%);
+  height: calc(var(--line-height, 60px) * 1.5);
+  transform: translateY(-50%);
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(var(--glow), 0.1) 30%,
+    rgba(var(--glow), 0.2) 50%,
+    rgba(var(--glow), 0.1) 70%,
+    transparent
+  );
+}
+
+.glow::before,
+.glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 4vw;
+  max-width: 28px;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--accent);
+  box-shadow:
+    0 0 10px rgba(var(--glow), 0.9),
+    0 0 26px rgba(var(--glow), 0.6);
+}
+
+.glow::before {
+  left: 0;
+  border-radius: 0 2px 2px 0;
+}
+
+.glow::after {
+  right: 0;
+  border-radius: 2px 0 0 2px;
+}
+
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  pointer-events: none;
+}
+
+#progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  color: var(--accent);
+  font-size: min(48vw, 40vh);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 60px rgba(var(--glow), 0.6);
+}
+
+.countdown.pulse {
+  animation: pulse 1s ease-out;
+}
+
+@keyframes pulse {
+  from {
+    font-size: min(58vw, 48vh);
+    opacity: 0.4;
+  }
+}
+
+/* Controls sit over the stage. Taps between the two bars fall through to it. */
+.controls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    visibility 0.2s;
+}
+
+.controls.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.controls-top,
+.controls-bottom {
+  pointer-events: auto;
+}
+
+.controls.hidden .controls-top,
+.controls.hidden .controls-bottom {
+  pointer-events: none;
+}
+
+.controls-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) 20px
+    calc(10px + env(safe-area-inset-left));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.92) 55%, transparent);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.chip {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(23, 23, 27, 0.9);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.controls-bottom {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px calc(16px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+  border-radius: 24px 24px 0 0;
+  background: rgba(17, 17, 20, 0.94);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+}
+
+.steppers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+}
+
+/* In the overlay each stepper puts its label above the buttons, so two fit side by side on a phone. */
+.steppers .stepper {
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 0;
+}
+
+.steppers .stepper-label {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.transport-pad {
+  width: 60px;
+}
+
+.play-btn {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 0 32px rgba(var(--glow), 0.45);
+}
+
+.play-btn svg {
+  width: 40px;
+  height: 40px;
+}
+
+.play-btn .icon-pause,
+.play-btn.is-playing .icon-play {
+  display: none;
+}
+
+.play-btn.is-playing .icon-pause {
+  display: block;
+}
+
+/* Narrow phones: slightly smaller stepper buttons so both steppers still fit on one row. */
+@media (max-width: 380px) {
+  .steppers {
+    gap: 8px 12px;
+  }
+
+  .steppers .stepper {
+    --tap: 46px;
+    gap: 4px;
+  }
+}
+
+/* Short screens, such as a phone in landscape: put everything on one row. */
+@media (max-height: 480px) {
+  .controls-bottom {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    max-width: none;
+    padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    border-radius: 0;
+  }
+
+  .transport {
+    gap: 14px;
+  }
+
+  .transport-pad {
+    display: none;
+  }
+
+  .play-btn {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown.pulse {
+    animation: none;
+  }
+
+  .controls,
+  .switch,
+  .switch::after {
+    transition: none;
+  }
+}

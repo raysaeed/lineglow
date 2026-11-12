@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="LineGlow is a clean, simple teleprompter for creators. Paste your script, set the speed, and read along to a glowing line while you record."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>LineGlow</title>
+  </head>
+  <body>
+    <!-- Library: saved scripts -->
+    <section id="view-library" class="view" hidden>
+      <header class="topbar">
+        <h1 class="brand"><span class="brand-mark" aria-hidden="true"></span>LineGlow</h1>
+      </header>
+      <main class="library">
+        <ul id="script-list" class="script-list"></ul>
+        <div id="empty" class="empty" hidden>
+          <p class="empty-title">No scripts yet</p>
+          <p>Create one, paste your text, and start prompting.</p>
+        </div>
+      </main>
+      <div class="bottom-bar">
+        <button id="new-script" class="btn primary" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          New script
+        </button>
+      </div>
+    </section>
+
+    <!-- Editor -->
+    <section id="view-editor" class="view" hidden>
+      <header class="topbar">
+        <button id="editor-back" class="icon-btn" type="button" aria-label="Back to scripts">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <input
+          id="title"
+          class="title-input"
+          type="text"
+          placeholder="Untitled script"
+          aria-label="Script title"
+          autocomplete="off"
+          maxlength="120"
+        />
+        <button id="open-settings" class="icon-btn" type="button" aria-label="Prompter settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
+            <circle cx="16" cy="7" r="2" />
+            <circle cx="8" cy="17" r="2" />
+          </svg>
+        </button>
+      </header>
+      <textarea
+        id="text"
+        class="script-input"
+        placeholder="Paste or type your script here…"
+        aria-label="Script text"
+        spellcheck="true"
+      ></textarea>
+      <div class="bottom-bar">
+        <span id="word-count" class="word-count"></span>
+        <button id="start" class="btn primary" type="button">
+          <svg viewBox="0 0 24 24" class="filled" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          Start
+        </button>
+      </div>
+    </section>
+
+    <!-- Prompter -->
+    <section id="view-prompter" class="view prompter" hidden>
+      <div id="stage" class="stage">
+        <div id="mirror" class="mirror">
+          <div id="scroller" class="scroller">
+            <div id="prompt-text" class="prompt-text"></div>
+          </div>
+        </div>
+        <div id="glow" class="glow" aria-hidden="true"></div>
+        <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+        <div id="countdown" class="countdown" aria-live="assertive" hidden></div>
+      </div>
+
+      <div id="controls" class="controls">
+        <div class="controls-top">
+          <button id="prompter-edit" class="icon-btn" type="button" aria-label="Back to edit (Esc)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+          </button>
+          <span class="spacer"></span>
+          <button class="chip" type="button" data-toggle="line" aria-pressed="false">Line</button>
+          <button class="chip" type="button" data-toggle="mirror" aria-pressed="false">Mirror</button>
+          <button id="fullscreen" class="icon-btn" type="button" aria-label="Toggle fullscreen">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="controls-bottom">
+          <div class="steppers">
+            <div class="stepper">
+              <span class="stepper-label">Speed</span>
+              <button type="button" data-step="speed" data-delta="-1" aria-label="Slower">−</button>
+              <output data-out="speed"></output>
+              <button type="button" data-step="speed" data-delta="1" aria-label="Faster">+</button>
+            </div>
+            <div class="stepper">
+              <span class="stepper-label">Size</span>
+              <button type="button" data-step="fontSize" data-delta="-1" aria-label="Smaller text">−</button>
+              <output data-out="fontSize"></output>
+              <button type="button" data-step="fontSize" data-delta="1" aria-label="Larger text">+</button>
+            </div>
+          </div>
+          <div class="transport">
+            <button id="restart" class="icon-btn large" type="button" aria-label="Back to start">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v5h5" />
+              </svg>
+            </button>
+            <button id="play" class="play-btn" type="button" aria-label="Play">
+              <svg viewBox="0 0 24 24" class="filled icon-play" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              <svg viewBox="0 0 24 24" class="filled icon-pause" aria-hidden="true">
+                <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
+              </svg>
+            </button>
+            <span class="transport-pad" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings sheet -->
+    <dialog id="settings" class="sheet">
+      <h2>Prompter settings</h2>
+      <div class="stepper">
+        <span class="stepper-label">Speed</span>
+        <button type="button" data-step="speed" data-delta="-1" aria-label="Slower">−</button>
+        <output data-out="speed"></output>
+        <button type="button" data-step="speed" data-delta="1" aria-label="Faster">+</button>
+      </div>
+      <div class="stepper">
+        <span class="stepper-label">Font size</span>
+        <button type="button" data-step="fontSize" data-delta="-1" aria-label="Smaller text">−</button>
+        <output data-out="fontSize"></output>
+        <button type="button" data-step="fontSize" data-delta="1" aria-label="Larger text">+</button>
+      </div>
+      <div class="setting-row">
+        <span class="stepper-label">Countdown</span>
+        <div class="segmented" role="group" aria-label="Countdown">
+          <button type="button" data-countdown="0">Off</button>
+          <button type="button" data-countdown="3">3s</button>
+          <button type="button" data-countdown="5">5s</button>
+          <button type="button" data-countdown="10">10s</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="stepper-label">Reading line</span>
+        <button class="switch" type="button" data-toggle="line" aria-pressed="false" aria-label="Reading line"></button>
+      </div>
+      <div class="setting-row">
+        <span class="stepper-label">Mirror text</span>
+        <button class="switch" type="button" data-toggle="mirror" aria-pressed="false" aria-label="Mirror text"></button>
+      </div>
+      <button id="close-settings" class="btn primary" type="button">Done</button>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
